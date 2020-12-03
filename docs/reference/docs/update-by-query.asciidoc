@@ -168,7 +168,7 @@ include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=analyzer]
 include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=analyze_wildcard]
   
 `conflicts`::
-  (Optional, string) What to do if delete by query hits version conflicts: 
+  (Optional, string) What to do if update by query hits version conflicts: 
   `abort` or `proceed`. Defaults to `abort`.
 
 include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=default_operator]
@@ -195,7 +195,10 @@ include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=search-q]
 
 include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=request_cache]
 
-include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=refresh]
+`refresh`::
+(Optional, Boolean)
+If `true`, {es} refreshes affected shards to make the operation visible to
+search. Defaults to `false`.
 
 include::{es-repo-dir}/rest-api/common-parms.asciidoc[tag=requests_per_second]
 

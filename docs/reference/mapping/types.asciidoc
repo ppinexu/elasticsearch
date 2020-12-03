@@ -23,12 +23,11 @@ type: `boolean`.
 
 <<binary,`binary`>>::   Binary value encoded as a Base64 string.
 <<boolean,`boolean`>>:: `true` and `false` values.
-Keyword::               The keyword family, including <<keyword, `keyword`>>,
-                        <<constant-keyword,`constant_keyword`>>, and
-                        <<wildcard, `wildcard`>>.
+<<keyword, Keywords>>:: The keyword family, including `keyword`, `constant_keyword`,
+                        and `wildcard`.
 <<number,Numbers>>::    Numeric types, such as `long` and `double`, used to
                         express amounts.
-Dates::                 Date types, including <<date,`date`>> and 
+Dates::                 Date types, including <<date,`date`>> and
                         <<date_nanos,`date_nanos`>>.
 <<alias,`alias`>>::     Defines an alias for an existing field.
 
@@ -81,6 +80,7 @@ as-you-type completion.
 ==== Document ranking types
 
 <<dense-vector,`dense_vector`>>::   Records dense vectors of float values.
+<<sparse-vector,`sparse_vector`>>:: Records sparse vectors of float values.
 <<rank-feature,`rank_feature`>>::   Records a numeric feature to boost hits at
                                     query time.
 <<rank-features,`rank_features`>>:: Records numeric features to boost hits at
@@ -139,13 +139,13 @@ include::types/date_nanos.asciidoc[]
 
 include::types/dense-vector.asciidoc[]
 
-include::types/histogram.asciidoc[]
-
 include::types/flattened.asciidoc[]
 
 include::types/geo-point.asciidoc[]
 
 include::types/geo-shape.asciidoc[]
+
+include::types/histogram.asciidoc[]
 
 include::types/ip.asciidoc[]
 
@@ -171,14 +171,10 @@ include::types/rank-features.asciidoc[]
 
 include::types/search-as-you-type.asciidoc[]
 
+include::types/shape.asciidoc[]
+
 include::types/sparse-vector.asciidoc[]
 
 include::types/text.asciidoc[]
 
 include::types/token-count.asciidoc[]
-
-include::types/shape.asciidoc[]
-
-include::types/constant-keyword.asciidoc[]
-
-include::types/wildcard.asciidoc[]

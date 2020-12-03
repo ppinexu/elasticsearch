@@ -669,10 +669,11 @@ for providing general testing guidance for applications that communicate with {e
 
 This page was deleted.
 Information about the Java testing framework was removed
-({es-issue}55257[55257]) from the {es} Reference
-because it was out of date and erroneously implied that it should be used by application developers.
-There is an issue ({es-issue}[#55258])
-for providing general testing guidance for applications that communicate with {es}.
+({es-issue}55257[55257]) from the {es} Reference because it was out of date and
+erroneously implied that it should be used by application developers.
+
+There is an issue ({es-issue}55258[#55258]) for providing general testing
+guidance for applications that communicate with {es}.
 
 
 [role="exclude",id="why-randomized-testing"]
@@ -1135,3 +1136,58 @@ See <<joining-queries-notes>>.
 === Percolate query notes
 
 See <<percolate-query-notes>>.
+
+[role="exclude",id="constant-keyword"]
+=== Constant keyword field type
+
+See <<constant-keyword-field-type>>.
+
+[role="exclude",id="wildcard"]
+=== Wildcard field type
+
+See <<wildcard-field-type>>.
+
+[role="exclude",id="avoid-oversharding"]
+=== Avoid oversharding
+
+See <<size-your-shards>>.
+
+[role="exclude",id="_parameters_8"]
+=== elasticsearch-croneval parameters
+
+See <<elasticsearch-croneval-parameters>>.
+
+[role="exclude",id="caching-heavy-aggregations"]
+=== Caching heavy aggregations
+
+See <<agg-caches>>.
+
+[role="exclude",id="returning-only-agg-results"]
+=== Returning only aggregation results
+
+See <<return-only-agg-results>>.
+
+[role="exclude",id="agg-metadata"]
+=== Aggregation metadata
+
+See <<add-metadata-to-an-agg>>.
+
+[role="exclude",id="returning-aggregation-type"]
+=== Returning the type of the aggregation
+
+See <<return-agg-type>>.
+
+[role="exclude",id="indexing-aggregation-results"]
+=== Indexing aggregation results with transforms
+
+See <<transforms>>.
+
+[role="exclude",id="search-aggregations-matrix"]
+=== Matrix aggregations
+
+See <<search-aggregations-matrix-stats-aggregation>>.
+
+[[fielddata]]
+=== `fielddata` mapping parameter
+
+See <<fielddata-mapping-param>>.

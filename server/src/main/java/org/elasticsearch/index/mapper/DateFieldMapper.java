@@ -19,6 +19,7 @@
 
 package org.elasticsearch.index.mapper;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.SortedNumericDocValuesField;
@@ -38,6 +39,7 @@ import org.elasticsearch.common.Explicit;
 import org.elasticsearch.common.Nullable;
 import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.common.joda.Joda;
+import org.elasticsearch.common.logging.DeprecationLogger;
 import org.elasticsearch.common.time.DateFormatter;
 import org.elasticsearch.common.time.DateFormatters;
 import org.elasticsearch.common.time.DateMathParser;
@@ -71,6 +73,8 @@ import static org.elasticsearch.common.time.DateUtils.toLong;
 
 /** A {@link FieldMapper} for dates. */
 public final class DateFieldMapper extends FieldMapper {
+
+    private static final DeprecationLogger DEPRECATION_LOGGER = new DeprecationLogger(LogManager.getLogger(DateFieldMapper.class));
 
     public static final String CONTENT_TYPE = "date";
     public static final String DATE_NANOS_CONTENT_TYPE = "date_nanos";
@@ -240,21 +244,38 @@ public final class DateFieldMapper extends FieldMapper {
             return format.explicit();
         }
 
-        protected DateFieldType setupFieldType(BuilderContext context) {
+        private DateFormatter buildFormatter(BuilderContext context) {
             String pattern = this.format.value();
-            DateFormatter formatter;
-            if (Joda.isJodaPattern(context.indexCreatedVersion(), pattern)) {
-                formatter = Joda.forPattern(pattern).withLocale(locale);
-            } else {
-                formatter = DateFormatter.forPattern(pattern).withLocale(locale);
+            try {
+                if (Joda.isJodaPattern(context.indexCreatedVersion(), pattern)) {
+                    return Joda.forPattern(pattern).withLocale(locale);
+                } else {
+                    return DateFormatter.forPattern(pattern).withLocale(locale);
+                }
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Error parsing [format] on field [" + name() + "]: " + e.getMessage(), e);
             }
-            return new DateFieldType(buildFullName(context), indexed, hasDocValues, formatter, resolution, meta);
+        }
+
+        private Long parseNullValue(DateFieldType fieldType) {
+            if (nullValue == null) {
+                return null;
+            }
+            try {
+                return fieldType.parse(nullValue);
+            }
+            catch (Exception e) {
+                DEPRECATION_LOGGER.deprecatedAndMaybeLog("date_field_null_value",
+                    "Error parsing [{}] as date in [null_value] on field [{}]; [null_value] will be ignored", nullValue, name);
+                return null;
+            }
         }
 
         @Override
         public DateFieldMapper build(BuilderContext context) {
-            DateFieldType ft = setupFieldType(context);
-            Long nullTimestamp = nullValue == null ? null : ft.dateTimeFormatter.parseMillis(nullValue);
+            DateFieldType ft = new DateFieldType(buildFullName(context), indexed, hasDocValues, buildFormatter(context), resolution, meta);
+
+            Long nullTimestamp = parseNullValue(ft);
             return new DateFieldMapper(name, fieldType, ft, ignoreMalformed(context), nullTimestamp, nullValue,
                 multiFieldsBuilder.build(this, context), copyTo);
         }
