@@ -19,7 +19,6 @@
 
 package org.elasticsearch.index.mapper;
 
-import org.elasticsearch.Version;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.ToXContentFragment;
@@ -44,19 +43,19 @@ import static java.util.Collections.unmodifiableMap;
  */
 public final class Mapping implements ToXContentFragment {
 
-    final Version indexCreated;
     final RootObjectMapper root;
     final MetadataFieldMapper[] metadataMappers;
     final Map<Class<? extends MetadataFieldMapper>, MetadataFieldMapper> metadataMappersMap;
+    final Map<String, MetadataFieldMapper> metadataMappersByName;
     final Map<String, Object> meta;
 
-    public Mapping(Version indexCreated, RootObjectMapper rootObjectMapper,
-                   MetadataFieldMapper[] metadataMappers, Map<String, Object> meta) {
-        this.indexCreated = indexCreated;
+    public Mapping(RootObjectMapper rootObjectMapper, MetadataFieldMapper[] metadataMappers, Map<String, Object> meta) {
         this.metadataMappers = metadataMappers;
         Map<Class<? extends MetadataFieldMapper>, MetadataFieldMapper> metadataMappersMap = new HashMap<>();
+        Map<String, MetadataFieldMapper> metadataMappersByName = new HashMap<>();
         for (MetadataFieldMapper metadataMapper : metadataMappers) {
             metadataMappersMap.put(metadataMapper.getClass(), metadataMapper);
+            metadataMappersByName.put(metadataMapper.name(), metadataMapper);
         }
         this.root = rootObjectMapper;
         // keep root mappers sorted for consistent serialization
@@ -67,6 +66,7 @@ public final class Mapping implements ToXContentFragment {
             }
         });
         this.metadataMappersMap = unmodifiableMap(metadataMappersMap);
+        this.metadataMappersByName = unmodifiableMap(metadataMappersByName);
         this.meta = meta;
     }
 
@@ -86,7 +86,7 @@ public final class Mapping implements ToXContentFragment {
      * Generate a mapping update for the given root object mapper.
      */
     public Mapping mappingUpdate(Mapper rootObjectMapper) {
-        return new Mapping(indexCreated, (RootObjectMapper) rootObjectMapper, metadataMappers, meta);
+        return new Mapping((RootObjectMapper) rootObjectMapper, metadataMappers, meta);
     }
 
     /** Get the root mapper with the given class. */
@@ -133,7 +133,11 @@ public final class Mapping implements ToXContentFragment {
             XContentHelper.mergeDefaults(mergedMeta, meta);
         }
 
-        return new Mapping(indexCreated, mergedRoot, mergedMetadataMappers.values().toArray(new MetadataFieldMapper[0]), mergedMeta);
+        return new Mapping(mergedRoot, mergedMetadataMappers.values().toArray(new MetadataFieldMapper[0]), mergedMeta);
+    }
+
+    public MetadataFieldMapper getMetadataMapper(String mapperName) {
+        return metadataMappersByName.get(mapperName);
     }
 
     @Override

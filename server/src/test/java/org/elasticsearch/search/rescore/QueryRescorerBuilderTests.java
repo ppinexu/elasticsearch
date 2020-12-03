@@ -39,7 +39,6 @@ import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.mapper.ContentPath;
 import org.elasticsearch.index.mapper.MappedFieldType;
-import org.elasticsearch.index.mapper.Mapper;
 import org.elasticsearch.index.mapper.TextFieldMapper;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -56,6 +55,7 @@ import org.junit.BeforeClass;
 import java.io.IOException;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.elasticsearch.test.EqualsHashCodeTestUtils.checkEqualsAndHashCode;
 import static org.hamcrest.Matchers.containsString;
 
@@ -144,11 +144,11 @@ public class QueryRescorerBuilderTests extends ESTestCase {
         // shard context will only need indicesQueriesRegistry for building Query objects nested in query rescorer
         QueryShardContext mockShardContext = new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE,
             null, null, null, null, null,
-            xContentRegistry(), namedWriteableRegistry, null, null, () -> nowInMillis, null, null, () -> true, null) {
+            xContentRegistry(), namedWriteableRegistry, null, null, () -> nowInMillis, null, null, () -> true, null, emptyMap()) {
             @Override
-            public MappedFieldType fieldMapper(String name) {
-                TextFieldMapper.Builder builder = new TextFieldMapper.Builder(name);
-                return builder.build(new Mapper.BuilderContext(idxSettings.getSettings(), new ContentPath(1))).fieldType();
+            public MappedFieldType getFieldType(String name) {
+                TextFieldMapper.Builder builder = new TextFieldMapper.Builder(name, createDefaultIndexAnalyzers());
+                return builder.build(new ContentPath(1)).fieldType();
             }
         };
 
@@ -188,11 +188,11 @@ public class QueryRescorerBuilderTests extends ESTestCase {
         // shard context will only need indicesQueriesRegistry for building Query objects nested in query rescorer
         QueryShardContext mockShardContext = new QueryShardContext(0, idxSettings, BigArrays.NON_RECYCLING_INSTANCE,
                 null, null, null, null, null,
-                xContentRegistry(), namedWriteableRegistry, null, null, () -> nowInMillis, null, null, () -> true, null) {
+                xContentRegistry(), namedWriteableRegistry, null, null, () -> nowInMillis, null, null, () -> true, null, emptyMap()) {
             @Override
-            public MappedFieldType fieldMapper(String name) {
-                TextFieldMapper.Builder builder = new TextFieldMapper.Builder(name);
-                return builder.build(new Mapper.BuilderContext(idxSettings.getSettings(), new ContentPath(1))).fieldType();
+            public MappedFieldType getFieldType(String name) {
+                TextFieldMapper.Builder builder = new TextFieldMapper.Builder(name, createDefaultIndexAnalyzers());
+                return builder.build(new ContentPath(1)).fieldType();
             }
         };
 
